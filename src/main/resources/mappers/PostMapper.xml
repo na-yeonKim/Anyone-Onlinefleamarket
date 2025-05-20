@@ -82,4 +82,11 @@
         id DESC
     </select>
 
+    <!-- 게시글 수 카운팅 -->
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_post
+        WHERE delete_yn = 0
+    </select>
+
 </mapper>
