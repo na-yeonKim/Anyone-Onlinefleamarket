@@ -50,7 +50,7 @@ public class PostMapperTest {
         params.setId(1L);
         params.setTitle("1번 게시글 제목 수정합니다.");
         params.setContent("1번 게시글 내용 수정합니다.");
-        params.setWriter("도뎡이");
+        params.setWriter("나연");
         params.setSellYn(true);
         postMapper.update(params);
 
