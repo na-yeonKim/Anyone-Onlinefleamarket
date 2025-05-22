@@ -3,6 +3,9 @@ package com.study.domain.post;
 import com.study.common.dto.MessageDto;
 import com.study.common.dto.SearchDto;
 import com.study.common.paging.PagingResponse;
+import com.study.domain.file.FileRequest;
+import com.study.domain.file.FileService;
+import com.study.common.file.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +20,8 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
+    private final FileService fileService;
+    private final FileUtils fileUtils;
 
     // 게시글 작성 페이지
     @GetMapping("/post/write.do")
@@ -28,10 +33,13 @@ public class PostController {
         return "post/write";
     }
 
+
     // 신규 게시글 생성
     @PostMapping("/post/save.do")
     public String savePost(final PostRequest params, Model model) {
-        postService.savePost(params);
+        Long id = postService.savePost(params);
+        List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
+        fileService.saveFiles(id, files);
         MessageDto message = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
         return showMessageAndRedirect(message, model);
     }
