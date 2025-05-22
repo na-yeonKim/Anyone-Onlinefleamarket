@@ -67,4 +67,26 @@ public class MemberService {
         return memberMapper.countByLoginId(loginId);
     }
 
+    /**
+     * 로그인
+     * @param loginId - 로그인 ID
+     * @param password - 비밀번호
+     * @return 회원 상세정보
+     */
+    public MemberResponse login(final String loginId, final String password) {
+
+        // 1. 회원 정보 및 비밀번호 조회
+        MemberResponse member = findMemberByLoginId(loginId);
+        String encodedPassword = (member == null) ? "" : member.getPassword();
+
+        // 2. 회원 정보 및 비밀번호 체크
+        if (member == null || passwordEncoder.matches(password, encodedPassword) == false) {
+            return null;
+        }
+
+        // 3. 회원 응답 객체에서 비밀번호를 제거한 후 회원 정보 리턴
+        member.clearPassword();
+        return member;
+    }
+
 }
