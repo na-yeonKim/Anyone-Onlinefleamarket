@@ -79,4 +79,15 @@
         </foreach>
     </delete>
 
+    <!-- 파일 상세정보 조회 -->
+    <select id="findById" parameterType="long" resultType="com.study.domain.file.FileResponse">
+        SELECT
+        <include refid="fileColumns" />
+        FROM
+        tb_file
+        WHERE
+        delete_yn = 0
+        AND id = #{value}
+    </select>
+
 </mapper>
