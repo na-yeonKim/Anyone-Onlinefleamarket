@@ -3,6 +3,7 @@ package com.study.domain.post;
 import com.study.common.dto.SearchDto;
 import com.study.common.paging.Pagination;
 import com.study.common.paging.PagingResponse;
+import com.study.domain.price.PriceScraper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 public class PostService {
 
     private final PostMapper postMapper;
+    private final PriceScraper priceScraper;
 
     /**
      * 게시글 저장
@@ -24,6 +26,19 @@ public class PostService {
      */
     @Transactional
     public Long savePost(final PostRequest params) {
+        if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
+            try {
+                int finalPrice = calculateAutoPrice(
+                        params.getProductName(),
+                        params.getUsagePeriod(),
+                        params.getIsOpened().toString(),
+                        params.getCondition()
+                );
+                params.setPrice(finalPrice);
+            } catch (Exception e) {
+                params.setIsAutoPrice(false);
+            }
+        }
         postMapper.save(params);
         return params.getId();
     }
@@ -44,6 +59,11 @@ public class PostService {
      */
     @Transactional
     public Long updatePost(final PostRequest params) {
+        // 오류 방지
+        if (params.getPrice() == null) {
+            params.setPrice(0);
+        }
+
         postMapper.update(params);
         return params.getId();
     }
@@ -78,6 +98,16 @@ public class PostService {
         // 계산된 페이지 정보의 일부(limitStart, recordSize)를 기준으로 리스트 데이터 조회 후 응답 데이터 반환
         List<PostResponse> list = postMapper.findAll(params);
         return new PagingResponse<>(list, pagination);
+    }
+
+    public int calculateAutoPrice(String productName, String usagePeriod, String isOpened, String condition) {
+        int basePrice = priceScraper.getAveragePrice(productName);
+
+        double usageFactor = Double.parseDouble(usagePeriod);
+        double conditionFactor = Double.parseDouble(condition);
+        double openedFactor = Boolean.parseBoolean(isOpened) ? 0.9 : 1.0;
+
+        return (int) (basePrice * usageFactor * conditionFactor * openedFactor);
     }
 
 }

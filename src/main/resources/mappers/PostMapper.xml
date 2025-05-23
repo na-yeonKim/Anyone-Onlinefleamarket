@@ -14,8 +14,8 @@
         , delete_yn
         , created_date
         , modified_date
+        , price
     </sql>
-
 
     <!-- 게시글 저장 -->
     <insert id="save" parameterType="com.study.domain.post.PostRequest" useGeneratedKeys="true" keyProperty="id">
@@ -31,9 +31,9 @@
         , 0
         , NOW()
         , NULL
+        , #{price}
         )
     </insert>
-
 
     <!-- 게시글 상세정보 조회 -->
     <select id="findById" parameterType="long" resultType="com.study.domain.post.PostResponse">
@@ -45,7 +45,6 @@
         id = #{value}
     </select>
 
-
     <!-- 게시글 수정 -->
     <update id="update" parameterType="com.study.domain.post.PostRequest">
         UPDATE tb_post
@@ -55,10 +54,10 @@
         , content = #{content}
         , writer = #{writer}
         , sell_yn = #{sellYn}
+        , price = #{price}
         WHERE
         id = #{id}
     </update>
-
 
     <!-- 게시글 삭제 -->
     <delete id="deleteById" parameterType="long">
@@ -68,7 +67,6 @@
         WHERE
         id = #{id}
     </delete>
-
 
     <!-- 게시글 리스트 조회 -->
     <select id="findAll" parameterType="com.study.common.dto.SearchDto" resultType="com.study.domain.post.PostResponse">
@@ -84,7 +82,6 @@
         LIMIT #{pagination.limitStart}, #{recordSize}
     </select>
 
-
     <!-- 게시글 수 카운팅 -->
     <select id="count" parameterType="com.study.common.dto.SearchDto" resultType="int">
         SELECT
@@ -98,10 +95,8 @@
 
     <!-- 게시글 검색 -->
     <sql id="search">
-        <!-- 검색 키워드가 있을 때 -->
         <if test="keyword != null and keyword != ''">
             <choose>
-                <!-- 검색 유형이 있을 때 -->
                 <when test="searchType != null and searchType != ''">
                     <choose>
                         <when test="'title'.equals( searchType )">
@@ -115,8 +110,6 @@
                         </when>
                     </choose>
                 </when>
-
-                <!-- 전체 검색일 때 -->
                 <otherwise>
                     AND (
                     title LIKE CONCAT('%', #{keyword}, '%')

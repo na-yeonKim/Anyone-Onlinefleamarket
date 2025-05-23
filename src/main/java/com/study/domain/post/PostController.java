@@ -38,6 +38,23 @@ public class PostController {
     // 신규 게시글 생성
     @PostMapping("/post/save.do")
     public String savePost(final PostRequest params, Model model) {
+        if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
+            try {
+                int autoPrice = postService.calculateAutoPrice(
+                        params.getProductName(),
+                        params.getUsagePeriod(),
+                        String.valueOf(params.getIsOpened()),
+                        params.getCondition()
+                );
+                params.setPrice(autoPrice);
+            } catch (Exception e) {
+                // 자동 가격 계산 실패 시 수동 입력으로 fallback
+                params.setIsAutoPrice(false);
+                // 로그 찍거나 사용자에게 안내할 수도 있음
+                e.printStackTrace();
+            }
+        }
+
         Long id = postService.savePost(params);
         List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
         fileService.saveFiles(id, files);
@@ -49,6 +66,22 @@ public class PostController {
     // 기존 게시글 수정
     @PostMapping("/post/update.do")
     public String updatePost(final PostRequest params, final SearchDto queryParams, Model model) {
+
+        // 자동 가격 계산 로직 추가
+        if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
+            try {
+                int autoPrice = postService.calculateAutoPrice(
+                        params.getProductName(),
+                        params.getUsagePeriod(),
+                        String.valueOf(params.getIsOpened()),
+                        params.getCondition()
+                );
+                params.setPrice(autoPrice);
+            } catch (Exception e) {
+                params.setIsAutoPrice(false);
+                e.printStackTrace();
+            }
+        }
 
         // 1. 게시글 정보 수정
         postService.updatePost(params);

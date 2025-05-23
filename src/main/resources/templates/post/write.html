@@ -44,6 +44,57 @@
                         <td colspan="3"><input type="text" id="writer" name="writer" maxlength="10" placeholder="이름을 입력해 주세요." /></td>
                     </tr>
 
+                    <!-- 가격 입력 방식 선택 -->
+                    <tr>
+                        <th>가격 입력 방식</th>
+                        <td colspan="3">
+                            <label><input type="radio" name="isAutoPrice" value="false" checked /> 수동 입력</label>
+                            <label><input type="radio" name="isAutoPrice" value="true" /> 자동 입력</label>
+                        </td>
+                    </tr>
+
+                    <!-- 수동 입력 필드 -->
+                    <tr id="manualPriceRow">
+                        <th>가격</th>
+                        <td colspan="3"><input type="number" name="price" placeholder="가격을 입력하세요" /></td>
+                    </tr>
+
+                    <!-- 자동 입력 필드 -->
+                    <tr id="autoPriceFields" style="display:none;">
+                        <th>상품명</th>
+                        <td colspan="3"><input type="text" name="productName" placeholder="상품명을 입력하세요" /></td>
+                    </tr>
+                    <tr style="display:none;" class="auto-input">
+                        <th>사용 기간</th>
+                        <td>
+                            <select name="usagePeriod">
+                                <option value="1">1년 이하</option>
+                                <option value="0.8">1~3년</option>
+                                <option value="0.7">3~5년</option>
+                                <option value="0.5">5년 이상</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr style="display:none;" class="auto-input">
+                        <th>개봉 여부</th>
+                        <td>
+                            <select name="isOpened">
+                                <option value="false">미개봉</option>
+                                <option value="true">개봉</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr style="display:none;" class="auto-input">
+                        <th>제품 상태</th>
+                        <td>
+                            <select name="condition">
+                                <option value="1">상</option>
+                                <option value="0.7">중</option>
+                                <option value="0.5">하</option>
+                            </select>
+                        </td>
+                    </tr>
+
                     <tr>
                         <th>내용 <span class="es">필수 입력</span></th>
                         <td colspan="3"><textarea id="content" name="content" cols="50" rows="10" placeholder="내용을 입력해 주세요."></textarea></td>
@@ -85,6 +136,8 @@
             renderPostInfo();
 
             findAllFile();
+
+            document.querySelector('input[name="isAutoPrice"]:checked')?.dispatchEvent(new Event('change'));
         }
 
         // 게시글 상세정보 렌더링
@@ -97,7 +150,7 @@
             }
 
             const form = document.getElementById('saveForm');
-            const fields = ['id', 'title', 'content', 'writer', 'sellYn'];
+            const fields = ['id', 'title', 'content', 'writer', 'sellYn', 'price'];
             form.isSell.checked = post.sellYn;
             form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
 
@@ -240,6 +293,51 @@
                 fileRemoveBtn.setAttribute('onclick', `removeFile(this, ${response[i].id})`);
                 input.value = response[i].originalName;
             })
+        }
+        // 자동,수동 입력 구분 스크립트
+        document.querySelectorAll('input[name="isAutoPrice"]').forEach(radio => {
+          radio.addEventListener('change', function() {
+            const isAuto = this.value === 'true';
+            document.getElementById('manualPriceRow').style.display = isAuto ? 'none' : '';
+            document.querySelectorAll('.auto-input, #autoPriceFields').forEach(row => {
+              row.style.display = isAuto ? '' : 'none';
+            });
+          });
+        });
+
+        async function savePost() {
+            const form = document.getElementById('saveForm');
+            const isAuto = form.querySelector('input[name="isAutoPrice"]:checked').value === 'true';
+
+            // 필수 입력 검사
+            const fields = [form.title, form.writer, form.content];
+            const fieldNames = ['제목', '이름', '내용'];
+            for (let i = 0; i < fields.length; i++) {
+                isValid(fields[i], fieldNames[i]);
+            }
+
+            // 자동 가격 계산 수행
+            if (isAuto) {
+                const productName = form.productName.value;
+                const usagePeriod = form.usagePeriod.value;
+                const isOpened = form.isOpened.value;
+                const condition = form.condition.value;
+
+                const response = await fetch('/price/auto-calculate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productName, usagePeriod, isOpened, condition })
+                });
+                const result = await response.json();
+                form.querySelector('input[name="price"]').value = result.price;
+            }
+
+            // 나머지 처리
+            document.getElementById('saveBtn').disabled = true;
+            form.sellYn.value = form.isSell.checked;
+            form.removeFileIds.value = removeFileId.getAll().join();
+            form.action = [[ ${post == null} ]] ? '/post/save.do' : '/post/update.do';
+            form.submit();
         }
 
         /*]]>*/

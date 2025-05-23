@@ -32,6 +32,10 @@
           <td colspan="3">[[ ${post.viewCnt} ]]</td>
         </tr>
         <tr>
+          <th scope="row">가격</th>
+          <td colspan="3" th:text="${post.price != null} ? ${post.price} + ' 원' : '가격 정보 없음'"></td>
+        </tr>
+        <tr>
           <th scope="row">이름</th>
           <td colspan="3">[[ ${post.writer} ]]</td>
         </tr>
