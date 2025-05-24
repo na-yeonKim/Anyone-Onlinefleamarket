@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
 <th:block layout:fragment="title">
     <title>글작성 페이지</title>
 </th:block>
@@ -12,96 +13,88 @@
 
     <div class="content">
         <section>
-            <form id="saveForm" method="post" autocomplete="off" enctype="multipart/form-data">
-                <input type="hidden" id="id" name="id" th:if="${post != null}" th:value="${post.id}" />
-                <input type="hidden" id="sellYn" name="sellYn" th:value="${post.sellYn}" />
-                <input type="hidden" id="removeFileIds" name="removeFileIds" />
+            <form id="saveForm" method="post" enctype="multipart/form-data"
+                  th:attr="data-action=${post == null} ? '/post/save.do' : '/post/update.do'">
+                <input type="hidden" name="id" th:if="${post != null}" th:value="${post.id}" />
+                <input type="hidden" name="sellYn" />
+                <input type="hidden" name="removeFileIds" />
 
                 <table class="tb tb_row">
-                    <colgroup>
-                        <col style="width:15%;" /><col style="width:35%;" /><col style="width:15%;" /><col style="width:35%;" />
-                    </colgroup>
                     <tbody>
                     <tr>
-                        <th scope="row">판매</th>
-                        <td><span class="chkbox">
-                            <input type="checkbox" id="isSell" name="isSell" class="chk" th:checked="${post.sellYn}" />
-                            <i></i><label for="isSell"> 판매</label>
-                        </span></td>
+                        <th>판매</th>
+                        <td><input type="checkbox" id="isSell" name="isSell"
+                                   th:checked="${post?.sellYn}"/> 판매</td>
 
-                        <th scope="row">등록일</th>
-                        <td colspan="3">
-                            <input type="text" id="createdDate" name="createdDate" readonly
-                                   th:value="${post.createdDate != null} ? ${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')} : ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
+                        <th>등록일</th>
+                        <td>
+                            <input type="text" name="createdDate" readonly
+                                   th:value="${post?.createdDate != null} ? ${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')} : ${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"/>
                         </td>
                     </tr>
 
                     <tr>
-                        <th>제목 <span class="es">필수 입력</span></th>
-                        <td colspan="3">
-                            <input type="text" id="title" name="title" maxlength="50" placeholder="제목을 입력해 주세요." th:value="${post.title}" />
-                        </td>
+                        <th>제목</th>
+                        <td colspan="3"><input type="text" name="title" th:value="${post?.title}" /></td>
                     </tr>
 
                     <tr>
                         <th>가격 입력 방식</th>
                         <td colspan="3">
-                            <label><input type="radio" name="isAutoPrice" value="false" th:checked="${post?.isAutoPrice == false}" /> 수동 입력</label>
-                            <label><input type="radio" name="isAutoPrice" value="true" th:checked="${post?.isAutoPrice == true}" /> 자동 입력</label>
+                            <label><input type="radio" name="isAutoPrice" value="false"
+                                          th:checked="${post?.isAutoPrice == false}" /> 수동</label>
+                            <label><input type="radio" name="isAutoPrice" value="true"
+                                          th:checked="${post?.isAutoPrice == true}" /> 자동</label>
                         </td>
                     </tr>
 
                     <tr id="manualPriceRow">
                         <th>가격</th>
-                        <td colspan="3">
-                            <input type="number" name="price" placeholder="가격을 입력하세요" th:value="${post.price}" />
-                        </td>
+                        <td colspan="3"><input type="number" name="price" th:value="${post?.price}" /></td>
                     </tr>
 
-                    <tr id="autoPriceFields" style="display:none;">
+                    <tr id="autoPriceFields" class="auto-input">
                         <th>상품명</th>
-                        <td colspan="3">
-                            <input type="text" name="productName" placeholder="상품명을 입력하세요" th:value="${post.productName}" />
-                        </td>
+                        <td colspan="3"><input type="text" name="productName" th:value="${post?.productName}" /></td>
                     </tr>
 
-                    <tr style="display:none;" class="auto-input">
+                    <tr class="auto-input">
                         <th>사용 기간</th>
                         <td>
                             <select name="usagePeriod">
-                                <option value="1" th:selected="${post.usagePeriod == '1'}">1년 이하</option>
-                                <option value="0.8" th:selected="${post.usagePeriod == '0.8'}">1~3년</option>
-                                <option value="0.7" th:selected="${post.usagePeriod == '0.7'}">3~5년</option>
-                                <option value="0.5" th:selected="${post.usagePeriod == '0.5'}">5년 이상</option>
+                                <option value="1" th:selected="${post?.usagePeriod == '1'}">1년 이하</option>
+                                <option value="0.8" th:selected="${post?.usagePeriod == '0.8'}">1~3년</option>
+                                <option value="0.7" th:selected="${post?.usagePeriod == '0.7'}">3~5년</option>
+                                <option value="0.5" th:selected="${post?.usagePeriod == '0.5'}">5년 이상</option>
                             </select>
                         </td>
                     </tr>
 
-                    <tr style="display:none;" class="auto-input">
+                    <tr class="auto-input">
                         <th>개봉 여부</th>
                         <td>
                             <select name="isOpened">
-                                <option value="false" th:selected="${post.isOpened == false}">미개봉</option>
-                                <option value="true" th:selected="${post.isOpened == true}">개봉</option>
+                                <option value="false" th:selected="${post?.isOpened == false}">미개봉</option>
+                                <option value="true" th:selected="${post?.isOpened == true}">개봉</option>
                             </select>
                         </td>
                     </tr>
 
-                    <tr style="display:none;" class="auto-input">
+                    <tr class="auto-input">
                         <th>제품 상태</th>
                         <td>
                             <select name="condition">
-                                <option value="1" th:selected="${post.condition == '1'}">상</option>
-                                <option value="0.7" th:selected="${post.condition == '0.7'}">중</option>
-                                <option value="0.5" th:selected="${post.condition == '0.5'}">하</option>
+                                <option value="1" th:selected="${post?.condition == '1'}">상</option>
+                                <option value="0.7" th:selected="${post?.condition == '0.7'}">중</option>
+                                <option value="0.5" th:selected="${post?.condition == '0.5'}">하</option>
                             </select>
                         </td>
                     </tr>
 
                     <tr>
-                        <th>내용 <span class="es">필수 입력</span></th>
+                        <th>내용</th>
                         <td colspan="3">
-                            <textarea id="content" name="content" cols="50" rows="10" placeholder="내용을 입력해 주세요.">[[${post.content}]]</textarea>
+                            <textarea name="content" rows="8" th:text="${post?.content}"></textarea>
                         </td>
                     </tr>
 
@@ -109,24 +102,23 @@
                         <th>첨부파일</th>
                         <td colspan="3">
                             <div class="file_list">
-                                <div>
-                                    <div class="file_input">
-                                        <input type="text" readonly />
-                                        <label> 첨부파일
-                                            <input type="file" name="files" onchange="selectFile(this);" />
-                                        </label>
-                                    </div>
+                                <div class="file_input">
+                                    <input type="text" readonly />
+                                    <label> 첨부파일
+                                        <input type="file" name="files" onchange="selectFile(this);" />
+                                    </label>
                                     <button type="button" onclick="removeFile(this);" class="btns del_btn"><span>삭제</span></button>
                                     <button type="button" onclick="addFile();" class="btns fn_add_btn"><span>파일 추가</span></button>
                                 </div>
                             </div>
                         </td>
                     </tr>
+
                     </tbody>
                 </table>
             </form>
             <p class="btn_set">
-                <button type="button" id="saveBtn" onclick="savePost();" class="btns btn_st3 btn_mid">저장</button>
+                <button type="button" id="saveBtn" class="btns btn_st3 btn_mid">저장</button>
                 <a th:href="@{/post/list.do}" class="btns btn_bdr3 btn_mid">뒤로</a>
             </p>
         </section>
@@ -135,217 +127,92 @@
 
 <th:block layout:fragment="script">
     <script th:inline="javascript">
-        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', () => {
 
-        window.onload = () => {
-            renderPostInfo();
-
-            findAllFile();
-
-            document.querySelector('input[name="isAutoPrice"]:checked')?.dispatchEvent(new Event('change'));
-        }
-
-        // 게시글 상세정보 렌더링
-        function renderPostInfo() {
-            const post = [[ ${post} ]];
-
-            if ( !post ) {
-                initCreatedDate();
-                return false;
-            }
-
-            const form = document.getElementById('saveForm');
-            const fields = [form.title, form.content];
-            form.isSell.checked = post.sellYn;
-            form.createdDate.value = dayjs(post.createdDate).format('YYYY-MM-DD HH:mm');
-
-            fields.forEach(field => {
-                form[field].value = post[field];
-            })
-        }
-
-        // 등록일 초기화
-        function initCreatedDate() {
-            document.getElementById('createdDate').value = dayjs().format('YYYY-MM-DD');
-        }
-
-        // 게시글 저장(수정)
-        function savePost() {
-            const form = document.getElementById('saveForm');
-            const fields = [form.title, form.content];
-            const fieldNames = ['제목', '내용'];
-
-            for (let i = 0, len = fields.length; i < len; i++) {
-                isValid(fields[i], fieldNames[i]);
-            }
-
-            document.getElementById('saveBtn').disabled = true;
-            form.sellYn.value = form.isSell.checked;
-            form.removeFileIds.value = removeFileId.getAll().join();
-            form.action = [[ ${post == null} ]] ? '/post/save.do' : '/post/update.do';
-            form.submit();
-        }
-
-        // 파일 삭제 처리용 익명 함수
-        const removeFileId = (function() {
-            const ids = [];
-            return {
-                add(id) {
-                    if (ids.includes(id)) {
-                        return false;
-                    }
-                    ids.push(id);
-                },
-                getAll() {
-                    return ids;
-                }
-            }
-        }());
-
-        // 파일 선택
-        function selectFile(element, id) {
-
-            const file = element.files[0];
-            const filename = element.closest('.file_input').firstElementChild;
-
-            // 1. 파일 선택 창에서 취소 버튼이 클릭된 경우
-            if ( !file ) {
-                filename.value = '';
-                return false;
-            }
-
-            // 2. 파일 크기가 10MB를 초과하는 경우
-            const fileSize = Math.floor(file.size / 1024 / 1024);
-            if (fileSize > 10) {
-                alert('10MB 이하의 파일로 업로드해 주세요.');
-                filename.value = '';
-                element.value = '';
-                return false;
-            }
-
-            // 3. 파일명 지정
-            filename.value = file.name;
-
-            // 4. 삭제할 파일 id 추가
-            if (id) {
-                removeFileId.add(id);
-            }
-        }
-
-
-        // 파일 추가
-        function addFile() {
-            const fileDiv = document.createElement('div');
-            fileDiv.innerHTML =`
-                <div class="file_input">
-                    <input type="text" readonly />
-                    <label> 첨부파일
-                        <input type="file" name="files" onchange="selectFile(this);" />
-                    </label>
-                </div>
-                <button type="button" onclick="removeFile(this);" class="btns del_btn"><span>삭제</span></button>
-            `;
-            document.querySelector('.file_list').appendChild(fileDiv);
-        }
-
-
-        // 파일 삭제
-        function removeFile(element, id) {
-
-            // 1. 삭제할 파일 id 추가
-            if (id) {
-                removeFileId.add(id);
-            }
-
-            // 2. 파일 영역 초기화 & 삭제
-            const fileAddBtn = element.nextElementSibling;
-            if (fileAddBtn) {
-                const inputs = element.previousElementSibling.querySelectorAll('input');
-                inputs.forEach(input => input.value = '')
-                return false;
-            }
-            element.parentElement.remove();
-        }
-
-        // 전체 파일 조회
-        function findAllFile() {
-
-            // 1. 신규 등록/수정 체크
-            const post = [[ ${post}]];
-            if ( !post ) {
-                return false;
-            }
-
-            // 2. API 호출
-            const response = getJson(`/posts/${post.id}/files`);
-
-            // 3. 로직 종료
-            if ( !response.length ) {
-                return false;
-            }
-
-            // 4. 업로드 영역 추가
-            for (let i = 0, len = (response.length - 1); i < len; i++) {
-                addFile();
-            }
-
-            // 5. 파일 선택 & 삭제 이벤트 재선언 & 파일명 세팅
-            const filenameInputs = document.querySelectorAll('.file_list input[type="text"]');
-            filenameInputs.forEach((input, i) => {
-                const fileInput = input.nextElementSibling.firstElementChild;
-                const fileRemoveBtn = input.parentElement.nextElementSibling;
-                fileInput.setAttribute('onchange', `selectFile(this, ${response[i].id})`);
-                fileRemoveBtn.setAttribute('onclick', `removeFile(this, ${response[i].id})`);
-                input.value = response[i].originalName;
-            })
-        }
-        // 자동,수동 입력 구분 스크립트
-        document.querySelectorAll('input[name="isAutoPrice"]').forEach(radio => {
-          radio.addEventListener('change', function() {
-            const isAuto = this.value === 'true';
-            document.getElementById('manualPriceRow').style.display = isAuto ? 'none' : '';
-            document.querySelectorAll('.auto-input, #autoPriceFields').forEach(row => {
-              row.style.display = isAuto ? '' : 'none';
+            // 자동/수동 가격 입력 toggle
+            const radioButtons = document.querySelectorAll('input[name="isAutoPrice"]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const isAuto = radio.value === 'true';
+                    document.getElementById('manualPriceRow').style.display = isAuto ? 'none' : '';
+                    document.querySelectorAll('.auto-input').forEach(el => {
+                        el.style.display = isAuto ? '' : 'none';
+                    });
+                });
             });
-          });
+
+            // 최초 상태 반영
+            const selected = document.querySelector('input[name="isAutoPrice"]:checked');
+            if (selected) selected.dispatchEvent(new Event('change'));
+
+            // 저장 버튼 이벤트
+            document.getElementById('saveBtn').addEventListener('click', async () => {
+                const form = document.getElementById('saveForm');
+                const isAuto = form.querySelector('input[name="isAutoPrice"]:checked').value === 'true';
+
+                // 필수값 검증
+                const title = form.querySelector('input[name="title"]');
+                const content = form.querySelector('textarea[name="content"]');
+                if (!title.value.trim()) return alert("제목을 입력하세요.");
+                if (!content.value.trim()) return alert("내용을 입력하세요.");
+
+                // 자동 가격 계산 처리
+                if (isAuto) {
+                    const payload = {
+                        productName: form.productName.value,
+                        usagePeriod: form.usagePeriod.value,
+                        isOpened: form.isOpened.value,
+                        condition: form.condition.value
+                    };
+
+                    const res = await fetch('/price/auto-calculate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await res.json();
+                    form.querySelector('input[name="price"]').value = result.price;
+                }
+
+                // 최종 제출
+                form.sellYn.value = form.isSell.checked;
+                form.action = form.getAttribute("data-action");
+                form.submit();
+            });
         });
 
-        async function savePost() {
-            const form = document.getElementById('saveForm');
-            const isAuto = form.querySelector('input[name="isAutoPrice"]:checked').value === 'true';
-
-            // 필수 입력 검사
-            const fields = [form.title, form.content];
-            const fieldNames = ['제목', '이름', '내용'];
-            for (let i = 0; i < fields.length; i++) {
-                isValid(fields[i], fieldNames[i]);
+        function selectFile(input) {
+            const file = input.files[0];
+            const display = input.closest('label').previousElementSibling;
+            if (!file) return display.value = "";
+            if (file.size > 10 * 1024 * 1024) {
+                alert("10MB 이하만 업로드 가능합니다.");
+                input.value = "";
+                display.value = "";
+                return;
             }
-
-            // 자동 가격 계산 수행
-            if (isAuto) {
-                const productName = form.productName.value;
-                const usagePeriod = form.usagePeriod.value;
-                const isOpened = form.isOpened.value;
-                const condition = form.condition.value;
-
-                const response = await fetch('/price/auto-calculate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productName, usagePeriod, isOpened, condition })
-                });
-                const result = await response.json();
-                form.querySelector('input[name="price"]').value = result.price;
-            }
-
-            // 나머지 처리
-            document.getElementById('saveBtn').disabled = true;
-            form.sellYn.value = form.isSell.checked;
-            form.removeFileIds.value = removeFileId.getAll().join();
-            form.action = [[ ${post == null} ]] ? '/post/save.do' : '/post/update.do';
-            form.submit();
+            display.value = file.name;
         }
 
-        /*]]>*/
+        function addFile() {
+            const container = document.querySelector('.file_list');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class="file_input">
+                    <input type="text" readonly />
+                    <label>첨부파일
+                        <input type="file" name="files" onchange="selectFile(this);" />
+                    </label>
+                    <button type="button" onclick="removeFile(this);" class="btns del_btn"><span>삭제</span></button>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeFile(button) {
+            const div = button.closest('.file_input');
+            if (div) div.remove();
+        }
     </script>
 </th:block>
 </html>

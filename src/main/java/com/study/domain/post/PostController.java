@@ -46,10 +46,10 @@ public class PostController {
     @PostMapping("/post/save.do")
     public String savePost(final PostRequest params, HttpSession session, Model model) {
 
-        // 1. 로그인한 사용자 정보에서 loginId 가져와서 작성자로 지정
+        // 1. 로그인한 사용자 정보에서 작성자 설정
         MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
         if (loginMember != null) {
-            params.setWriter(loginMember.getLoginId()); // 작성자에 loginId 저장
+            params.setWriter(loginMember.getLoginId());
         }
 
         // 2. 자동 가격 계산
@@ -68,12 +68,21 @@ public class PostController {
             }
         }
 
-        // 3. 게시글 및 파일 저장
-        Long id = postService.savePost(params);
-        List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
-        fileService.saveFiles(id, files);
+        // 3. 게시글 저장 (→ postId 획득)
+        Long postId = postService.savePost(params);
 
-        // 4. 메시지 처리 후 리다이렉트
+        // 4. 파일 업로드 (디스크에 저장)
+        List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
+
+        // 5. postId 주입
+        for (FileRequest file : files) {
+            file.setPostId(postId);
+        }
+
+        // 6. 파일 DB 저장
+        fileService.saveFiles(postId, files);
+
+        // 7. 성공 메시지 처리 후 리다이렉트
         MessageDto message = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
         return showMessageAndRedirect(message, model);
     }
