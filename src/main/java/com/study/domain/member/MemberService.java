@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -20,6 +22,7 @@ public class MemberService {
      */
     @Transactional
     public Long saveMember(final MemberRequest params) {
+        params.setRole("USER"); // 기본값 명시
         params.encodingPassword(passwordEncoder);
         memberMapper.save(params);
         return params.getId();
@@ -87,6 +90,14 @@ public class MemberService {
         // 3. 회원 응답 객체에서 비밀번호를 제거한 후 회원 정보 리턴
         member.clearPassword();
         return member;
+    }
+
+    public void reportMember(Long id) {
+        memberMapper.updateReportCount(id);
+    }
+
+    public List<MemberResponse> getReportedMembers() {
+        return memberMapper.findReportedMembers();
     }
 
 }

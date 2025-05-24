@@ -30,7 +30,9 @@
                             <li><a href="javascript: alert('준비 중입니다.');">캘린더형</a></li>
                         </ul>
                     </li>
-                    <li><a href="javascript: alert('준비 중입니다.');"><span>회원 관리</span></a></li>
+                    <li th:if="${session.loginMember != null and session.loginMember.role == 'ADMIN'}">
+                        <a href="/admin/reported-members"><span>신고된 회원 관리</span></a>
+                    </li>
                 </ul>
             </nav>
         </div>

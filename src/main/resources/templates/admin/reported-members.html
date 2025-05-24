@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>신고된 회원 목록</title>
+</head>
+<body>
+<h1>신고된 회원 목록</h1>
+<table>
+    <thead>
+    <tr>
+        <th>아이디</th>
+        <th>이름</th>
+        <th>신고 횟수</th>
+        <th>탈퇴 처리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="member : ${reportedMembers}">
+        <td th:text="${member.loginId}"></td>
+        <td th:text="${member.name}"></td>
+        <td th:text="${member.reportCount}"></td>
+        <td>
+            <form th:action="@{'/admin/members/' + ${member.id} + '/delete'}" method="post">
+                <button type="submit">탈퇴시키기</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

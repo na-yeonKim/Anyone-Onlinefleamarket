@@ -18,12 +18,18 @@ public class MemberRequest {
     private String name;            // 이름
     private Gender gender;          // 성별
     private LocalDate birthday;     // 생년월일
+    private String role;            // 회원 역할 (ADMIN, USER)
+    private int reportCount;        // 신고 횟수
 
     public void encodingPassword(PasswordEncoder passwordEncoder) {
         if (StringUtils.isEmpty(password)) {
             return;
         }
         password = passwordEncoder.encode(password);
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
 }

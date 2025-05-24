@@ -37,7 +37,16 @@
         </tr>
         <tr>
           <th scope="row">이름</th>
-          <td colspan="3">[[ ${post.writer} ]]</td>
+          <td colspan="3">[[ ${post.writer} ]]
+            <!-- 신고 버튼 -->
+            <button type="button"
+                    th:if="${loginMember != null and loginMember.loginId != post.writer}"
+                    th:attr="data-writer=${post.writer}"
+                    onclick="reportWriterFromAttr(this)"
+                    class="btns btn_bdr1 btn_sm">
+              신고하기
+            </button>
+          </td>
         </tr>
         <tr>
           <th scope="row">내용</th>
@@ -365,6 +374,33 @@
 
             // 4. 파일 HTML 렌더링
             document.getElementById('files').innerHTML = fileHtml;
+        }
+
+        function reportWriter(loginId) {
+            if (!confirm(`${loginId}님을 신고하시겠습니까?`)) {
+                return;
+            }
+
+            fetch(`/members/report/${loginId}`, {
+                method: 'POST'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text); });
+                }
+                return response.text();
+            })
+            .then(data => {
+                alert(data); // ex: "신고가 완료되었습니다."
+            })
+            .catch(error => {
+                alert('신고에 실패했습니다: ' + error.message);
+            });
+        }
+
+        function reportWriterFromAttr(button) {
+            const writerLoginId = button.getAttribute("data-writer");
+            reportWriter(writerLoginId);
         }
 
     /*]]>*/

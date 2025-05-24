@@ -7,6 +7,8 @@ import com.study.domain.file.FileRequest;
 import com.study.domain.file.FileResponse;
 import com.study.domain.file.FileService;
 import com.study.common.file.FileUtils;
+import com.study.domain.member.MemberResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +39,15 @@ public class PostController {
 
     // 신규 게시글 생성
     @PostMapping("/post/save.do")
-    public String savePost(final PostRequest params, Model model) {
+    public String savePost(final PostRequest params, HttpSession session, Model model) {
+
+        // 1. 로그인한 사용자 정보에서 loginId 가져와서 작성자로 지정
+        MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+        if (loginMember != null) {
+            params.setWriter(loginMember.getLoginId()); // 작성자에 loginId 저장
+        }
+
+        // 2. 자동 가격 계산
         if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
             try {
                 int autoPrice = postService.calculateAutoPrice(
@@ -48,16 +58,17 @@ public class PostController {
                 );
                 params.setPrice(autoPrice);
             } catch (Exception e) {
-                // 자동 가격 계산 실패 시 수동 입력으로 fallback
                 params.setIsAutoPrice(false);
-                // 로그 찍거나 사용자에게 안내할 수도 있음
                 e.printStackTrace();
             }
         }
 
+        // 3. 게시글 및 파일 저장
         Long id = postService.savePost(params);
         List<FileRequest> files = fileUtils.uploadFiles(params.getFiles());
         fileService.saveFiles(id, files);
+
+        // 4. 메시지 처리 후 리다이렉트
         MessageDto message = new MessageDto("게시글 생성이 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
         return showMessageAndRedirect(message, model);
     }
@@ -123,12 +134,17 @@ public class PostController {
     }
 
     @GetMapping("/post/view.do")
-    public String openPostView(@RequestParam Long id,
-                               @RequestParam(required = false) Integer num, // 화면 번호
-                               Model model) {
+    public String openPostView(@RequestParam("id") Long id,
+                               @RequestParam(required = false) Integer num,
+                               Model model,
+                               HttpSession session) {
         PostResponse post = postService.findPostById(id);
         model.addAttribute("post", post);
-        model.addAttribute("viewNum", num); // 화면번호를 함께 넘김
+        model.addAttribute("viewNum", num);
+
+        MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+        model.addAttribute("loginMember", loginMember);
+
         return "post/view";
     }
 

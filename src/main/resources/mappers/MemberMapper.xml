@@ -14,6 +14,8 @@
         , delete_yn
         , created_date
         , modified_date
+        , role
+        , report_count
     </sql>
 
 
@@ -31,6 +33,8 @@
         , 0
         , NOW()
         , NULL
+        , #{role}
+        , #{reportCount}
         )
     </insert>
 
@@ -81,6 +85,19 @@
         tb_member
         WHERE
         login_id = #{value}
+    </select>
+
+    <update id="updateReportCount" parameterType="long">
+        UPDATE tb_member
+        SET report_count = report_count + 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="findReportedMembers" resultType="com.study.domain.member.MemberResponse">
+        SELECT
+        <include refid="memberColumns" />
+        FROM tb_member
+        WHERE report_count > 0 AND delete_yn = 0
     </select>
 
 </mapper>

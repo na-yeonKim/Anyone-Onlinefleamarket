@@ -3,7 +3,9 @@ package com.study.domain.member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,7 +53,7 @@ public class MemberController {
     // 회원 정보 삭제 (회원 탈퇴)
     @DeleteMapping("/members/{id}")
     @ResponseBody
-    public Long deleteMemberById(final Long id) {
+    public Long deleteMemberById(@PathVariable final Long id) {
         return memberService.deleteMemberById(id);
     }
 
@@ -85,6 +89,40 @@ public class MemberController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login.do";
+    }
+
+    @PostMapping("/members/report/{loginId}")
+    @ResponseBody
+    public ResponseEntity<?> reportMember(@PathVariable String loginId) {
+        MemberResponse member = memberService.findMemberByLoginId(loginId);
+        if (member == null) {
+            return ResponseEntity.badRequest().body("해당 회원을 찾을 수 없습니다.");
+        }
+        memberService.reportMember(member.getId());
+        return ResponseEntity.ok("신고가 완료되었습니다.");
+    }
+
+    @GetMapping("/admin/reported-members")
+    public String reportedMembers(Model model, HttpSession session) {
+        MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+        if (loginMember == null || !"ADMIN".equals(loginMember.getRole())) {
+            return "redirect:/login.do"; // 또는 오류 페이지
+        }
+
+        List<MemberResponse> reportedList = memberService.getReportedMembers();
+        model.addAttribute("reportedMembers", reportedList);
+        return "admin/reported-members";
+    }
+
+    @PostMapping("/admin/members/{id}/delete")
+    public String forceDeleteMember(@PathVariable Long id, HttpSession session) {
+        MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+        if (loginMember == null || !"ADMIN".equals(loginMember.getRole())) {
+            return "redirect:/login.do";
+        }
+
+        memberService.deleteMemberById(id);
+        return "redirect:/admin/reported-members";
     }
 
 }
