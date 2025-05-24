@@ -2,6 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>신고된 회원 목록</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        thead {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+
+        form {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 <h1>신고된 회원 목록</h1>
@@ -16,9 +72,9 @@
     </thead>
     <tbody>
     <tr th:each="member : ${reportedMembers}">
-        <td th:text="${member.loginId}"></td>
-        <td th:text="${member.name}"></td>
-        <td th:text="${member.reportCount}"></td>
+        <td th:text="${member.loginId}">아이디</td>
+        <td th:text="${member.name}">이름</td>
+        <td th:text="${member.reportCount}">0</td>
         <td>
             <form th:action="@{'/admin/members/' + ${member.id} + '/delete'}" method="post">
                 <button type="submit">탈퇴시키기</button>
