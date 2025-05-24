@@ -26,6 +26,9 @@ public class PostService {
      */
     @Transactional
     public Long savePost(final PostRequest params) {
+        if (params.getDeleteYn() == null) {
+            params.setDeleteYn(0);
+        }
         if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
             try {
                 int finalPrice = calculateAutoPrice(

@@ -7,7 +7,7 @@
 <th:block layout:fragment="content">
   <div class="page_tits">
     <h3>게시글 관리</h3>
-    <p class="path"><strong>현재 위치 :</strong> <span>게시글 관리</span> <span>리스트형</span> <span>상세정보</span></p>
+    <p class="path"><strong>현재 위치 :</strong> <span>게시글 리스트</span></p>
   </div>
 
   <div class="content">
@@ -26,10 +26,7 @@
         </tr>
         <tr>
           <th scope="row">제목</th>
-          <td>[[ ${post.title} ]]</td>
-
-          <th scope="row">조회</th>
-          <td colspan="3">[[ ${post.viewCnt} ]]</td>
+          <td colspan="3">[[ ${post.title} ]]</td>
         </tr>
         <tr>
           <th scope="row">가격</th>
@@ -110,6 +107,13 @@
     </div>
     <button type="button" class="btn_close" onclick="closeCommentUpdatePopup();"><span><i class="far fa-times-circle"></i></span></button>
   </div>
+
+  <!-- 찜한 게시글 목록 -->
+  <div class="liked-posts">
+    <h4>찜한 게시글</h4>
+    <ul id="likedPosts"></ul>
+  </div>
+
 </th:block>
 
 <th:block layout:fragment="script">
@@ -192,6 +196,11 @@
             findAllFile();
 
             findAllComment();
+
+            const member = [[ ${loginMember} ]];
+                if (member) {
+                    loadLikedPosts(member.id);
+                }
         }
 
 
@@ -401,6 +410,28 @@
         function reportWriterFromAttr(button) {
             const writerLoginId = button.getAttribute("data-writer");
             reportWriter(writerLoginId);
+        }
+
+        function loadLikedPosts(memberId) {
+            fetch(`/members/${memberId}/likes`)
+                .then(response => response.json())
+                .then(list => {
+                    const ul = document.getElementById('likedPosts');
+                    if (list.length === 0) {
+                        ul.innerHTML = '<li>찜한 게시글이 없습니다.</li>';
+                        return;
+                    }
+
+                    let html = '';
+                    list.forEach(item => {
+                        html += `<li>
+                            <a href="/post/view.do?id=${item.postId}">
+                                ${item.title} - ${item.price.toLocaleString()}원
+                            </a>
+                        </li>`;
+                    });
+                    ul.innerHTML = html;
+                });
         }
 
     /*]]>*/

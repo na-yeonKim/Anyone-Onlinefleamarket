@@ -9,7 +9,6 @@
         , title
         , content
         , writer
-        , view_cnt
         , sell_yn
         , delete_yn
         , created_date
@@ -20,18 +19,25 @@
     <!-- 게시글 저장 -->
     <insert id="save" parameterType="com.study.domain.post.PostRequest" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_post (
-        <include refid="postColumns" />
+        title,
+        content,
+        writer,
+        sell_yn,
+        delete_yn,
+        created_date,
+        modified_date,
+        price,
+        report_cnt
         ) VALUES (
-        #{id}
-        , #{title}
-        , #{content}
-        , #{writer}
-        , 0
-        , #{sellYn}
-        , 0
-        , NOW()
-        , NULL
-        , #{price}
+        #{title},
+        #{content},
+        #{writer},
+        0,
+        #{deleteYn},
+        NOW(),
+        NULL,
+        #{price},
+        0
         )
     </insert>
 

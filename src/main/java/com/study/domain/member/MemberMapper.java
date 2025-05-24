@@ -43,4 +43,6 @@ public interface MemberMapper {
 
     List<MemberResponse> findReportedMembers();
 
+    MemberResponse findById(Long id);
+
 }

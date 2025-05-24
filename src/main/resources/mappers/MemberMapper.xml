@@ -100,4 +100,12 @@
         WHERE report_count > 0 AND delete_yn = 0
     </select>
 
+    <select id="findById" parameterType="long" resultType="com.study.domain.member.MemberResponse">
+        SELECT
+        <include refid="memberColumns" />
+        FROM tb_member
+        WHERE delete_yn = 0
+        AND id = #{id}
+    </select>
+
 </mapper>

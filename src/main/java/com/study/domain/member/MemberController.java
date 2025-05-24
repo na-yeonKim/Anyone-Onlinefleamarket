@@ -1,5 +1,7 @@
 package com.study.domain.member;
 
+import com.study.domain.like.LikeResponse;
+import com.study.domain.like.LikeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final LikeService likeService;
 
     // 로그인 페이지
     @GetMapping("/login.do")
@@ -123,6 +126,17 @@ public class MemberController {
 
         memberService.deleteMemberById(id);
         return "redirect:/admin/reported-members";
+    }
+
+    @GetMapping("/members/detail/{id}")
+    public String memberDetail(@PathVariable Long id, Model model) {
+        MemberResponse member = memberService.findMemberById(id);
+        List<LikeResponse> likedPosts = likeService.findLikesByMemberId(id);
+
+        model.addAttribute("member", member);
+        model.addAttribute("likedPosts", likedPosts);
+
+        return "member/detail"; // member/detail.html
     }
 
 }

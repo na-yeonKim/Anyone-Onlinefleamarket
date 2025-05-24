@@ -7,9 +7,13 @@ import com.study.domain.file.FileRequest;
 import com.study.domain.file.FileResponse;
 import com.study.domain.file.FileService;
 import com.study.common.file.FileUtils;
+import com.study.domain.like.LikeRequest;
+import com.study.domain.like.LikeService;
 import com.study.domain.member.MemberResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +29,7 @@ public class PostController {
     private final PostService postService;
     private final FileService fileService;
     private final FileUtils fileUtils;
+    private final LikeService likeService;
 
     // 게시글 작성 페이지
     @GetMapping("/post/write.do")
