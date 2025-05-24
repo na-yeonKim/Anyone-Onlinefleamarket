@@ -81,9 +81,15 @@ public class PostController {
 
     // 기존 게시글 수정
     @PostMapping("/post/update.do")
-    public String updatePost(final PostRequest params, final SearchDto queryParams, Model model) {
+    public String updatePost(final PostRequest params, final SearchDto queryParams, HttpSession session, Model model) {
 
-        // 자동 가격 계산 로직 추가
+        // 로그인 사용자 정보에서 작성자 세팅
+        MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
+        if (loginMember != null) {
+            params.setWriter(loginMember.getLoginId());
+        }
+
+        // 자동 가격 계산
         if (Boolean.TRUE.equals(params.getIsAutoPrice())) {
             try {
                 int autoPrice = postService.calculateAutoPrice(

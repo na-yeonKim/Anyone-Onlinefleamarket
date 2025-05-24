@@ -56,9 +56,25 @@
         </tbody>
       </table>
       <p class="btn_set">
-        <button type="button" onclick="goWritePage();" class="btns btn_bdr4 btn_mid">수정</button>
-        <button type="button" onclick="deletePost();" class="btns btn_bdr1 btn_mid">삭제</button>
-        <button type="button" onclick="goListPage();" class="btns btn_bdr3 btn_mid">뒤로</button>
+        <button type="button"
+                onclick="goWritePage();"
+                class="btns btn_bdr4 btn_mid"
+                th:if="${loginMember != null and loginMember.loginId == post.writer}">
+          수정
+        </button>
+
+        <button type="button"
+                onclick="deletePost();"
+                class="btns btn_bdr1 btn_mid"
+                th:if="${loginMember != null and loginMember.loginId == post.writer}">
+          삭제
+        </button>
+
+        <button type="button"
+                onclick="goListPage();"
+                class="btns btn_bdr3 btn_mid">
+          뒤로
+        </button>
       </p>
 
       <!--/* 댓글 작성 */-->
@@ -106,12 +122,6 @@
       </p>
     </div>
     <button type="button" class="btn_close" onclick="closeCommentUpdatePopup();"><span><i class="far fa-times-circle"></i></span></button>
-  </div>
-
-  <!-- 찜한 게시글 목록 -->
-  <div class="liked-posts">
-    <h4>찜한 게시글</h4>
-    <ul id="likedPosts"></ul>
   </div>
 
 </th:block>
@@ -172,16 +182,22 @@
 
         // 댓글 저장
         function saveComment() {
-
             const content = document.getElementById('content');
             isValid(content, '댓글');
 
             const postId = [[ ${post.id} ]];
+            const member = [[ ${loginMember} ]];
+
+            if (!member || !member.loginId) {
+                alert('로그인 후 작성 가능합니다.');
+                return;
+            }
+
             const uri = `/posts/${postId}/comments`;
             const params = {
                 postId : postId,
                 content : content.value,
-                writer : '홍길동'
+                writer : member.loginId
             }
 
             callApi(uri, 'post', params);
@@ -285,10 +301,11 @@
 
         // 댓글 HTML draw
         function drawComments(list) {
+            const member = [[ ${loginMember} ]]; // Thymeleaf에서 로그인 정보 바인딩
 
-            if ( !list.length ) {
+            if (!list.length) {
                 document.querySelector('.cm_list').innerHTML = '<div class="cm_none"><p>등록된 댓글이 없습니다.</p></div>';
-                return false;
+                return;
             }
 
             let commentHtml = '';
@@ -296,19 +313,33 @@
             list.forEach(row => {
                 commentHtml += `
                     <div>
-                        <span class="writer_img"><img src="/images/default_profile.png" width="30" height="30" alt="기본 프로필 이미지"/></span>
+                        <span class="writer_img">
+                            <img src="/images/default_profile.png" width="30" height="30" alt="기본 프로필 이미지"/>
+                        </span>
                         <p class="writer">
                             <em>${row.writer}</em>
                             <span class="date">${dayjs(row.createdDate).format('YYYY-MM-DD HH:mm')}</span>
                         </p>
-                        <div class="cont"><div class="txt_con">${row.content}</div></div>
-                        <p class="func_btns">
-                            <button type="button" onclick="openCommentUpdatePopup(${row.id});" class="btns"><span class="icons icon_modify">수정</span></button>
-                            <button type="button" onclick="deleteComment(${row.id});" class="btns"><span class="icons icon_del">삭제</span></button>
-                        </p>
-                    </div>
+                        <div class="cont">
+                            <div class="txt_con">${row.content}</div>
+                        </div>
                 `;
-            })
+
+                if (member && member.loginId === row.writer) {
+                    commentHtml += `
+                        <p class="func_btns">
+                            <button type="button" onclick="openCommentUpdatePopup(${row.id});" class="btns">
+                                <span class="icons icon_modify">수정</span>
+                            </button>
+                            <button type="button" onclick="deleteComment(${row.id});" class="btns">
+                                <span class="icons icon_del">삭제</span>
+                            </button>
+                        </p>
+                    `;
+                }
+
+                commentHtml += '</div>';
+            });
 
             document.querySelector('.cm_list').innerHTML = commentHtml;
         }
