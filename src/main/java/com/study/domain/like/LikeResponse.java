@@ -1,6 +1,5 @@
 package com.study.domain.like;
 
-import com.study.domain.post.PostResponse;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -22,9 +22,10 @@
                 <table class="tb tb_row">
                     <tbody>
                     <tr>
-                        <th>판매</th>
-                        <td><input type="checkbox" id="isSell" name="isSell"
-                                   th:checked="${post?.sellYn}"/> 판매</td>
+                        <th>판매 <span class="es">필수 입력</span></th>
+                        <td>
+                            <input type="checkbox" id="isSell" name="isSell" th:checked="${post?.sellYn}" /> 판매
+                        </td>
 
                         <th>등록일</th>
                         <td>
@@ -34,27 +35,35 @@
                     </tr>
 
                     <tr>
-                        <th>제목</th>
-                        <td colspan="3"><input type="text" name="title" th:value="${post?.title}" /></td>
+                        <th>제목 <span class="es">필수 입력</span></th>
+                        <td colspan="3">
+                            <input type="text" name="title" th:value="${post?.title}" />
+                        </td>
                     </tr>
 
                     <tr>
-                        <th>가격 입력 방식</th>
+                        <th>가격 입력 방식 <span class="es">필수 입력</span></th>
                         <td colspan="3">
-                            <label><input type="radio" name="isAutoPrice" value="false"
-                                          th:checked="${post?.isAutoPrice == false}" /> 수동</label>
-                            <label><input type="radio" name="isAutoPrice" value="true"
-                                          th:checked="${post?.isAutoPrice == true}" /> 자동</label>
+                            <label>
+                                <input type="radio" name="isAutoPrice" value="false"
+                                       th:checked="${post?.isAutoPrice == false}" /> 수동
+                            </label>
+                            <label>
+                                <input type="radio" name="isAutoPrice" value="true"
+                                       th:checked="${post?.isAutoPrice == true}" /> 자동
+                            </label>
                         </td>
                     </tr>
 
                     <tr id="manualPriceRow">
-                        <th>가격</th>
-                        <td colspan="3"><input type="number" name="price" th:value="${post?.price}" /></td>
+                        <th>가격 <span class="es">필수 입력</span></th>
+                        <td colspan="3">
+                            <input type="number" name="price" th:value="${post?.price}" />
+                        </td>
                     </tr>
 
                     <tr id="autoPriceFields" class="auto-input">
-                        <th>상품명</th>
+                        <th>상품명 <span class="es">필수 입력</span></th>
                         <td colspan="3"><input type="text" name="productName" th:value="${post?.productName}" /></td>
                     </tr>
 
@@ -92,7 +101,7 @@
                     </tr>
 
                     <tr>
-                        <th>내용</th>
+                        <th>내용 <span class="es">필수 입력</span></th>
                         <td colspan="3">
                             <textarea name="content" rows="8" th:text="${post?.content}"></textarea>
                         </td>
