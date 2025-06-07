@@ -23,7 +23,7 @@ header .head h1 i {color:#e3e3e3; font-size:12px; font-weight:400;}
 header .head .top_menu {float:right;}
 header .head .top_menu > div {display:inline-block; font-size:13px;}
 header .head .top_menu > div i {font-size:12px; color:#fff;}
-header .head .top_menu > div button {background:#434b53; border:0; border-radius:3px; width:28px; height:28px; padding:0;}
+header .head .top_menu > div button {background:#7f7cab; border:0; border-radius:3px; width:28px; height:28px; padding:0;}
 header .head .top_menu > div.login_user {margin-right:20px;}
 header .head .top_menu > div.login_user strong, header .head .top_menu > div.login_user strong i {color:#333;}
 header .head .top_menu > div.login_user strong i {font-size:16px; vertical-align:bottom;}
@@ -60,7 +60,7 @@ footer {background:#fff; box-shadow:0 0 20px rgba(80,80,80,0.1); height:40px; li
 #login_box h2 img {max-height:34px;}
 #login_box h2 i {display:block; font-size:10px; color:#777; font-weight:300;}
 #login_box h2 + p {font-size:48px; color:#333; font-family:Arial, Helvetica, sans-serif, Dotum; font-weight:bold;}
-#login_box h2 + p i {color:#00adb4; font-weight:bold;}
+#login_box h2 + p i {color:#3F375C; font-weight:bold;}
 #login_box h2 + p > span {display:block; font-size:24px; color:#222; font-weight:bold;}
 #login_box .login_con {overflow:hidden; margin:50px 40px; position:relative;}
 #login_box .login_con:after {content:''; background:#ddd; width:1px; height:100%; position:absolute; top:0; left:240px;}
@@ -69,7 +69,7 @@ footer {background:#fff; box-shadow:0 0 20px rgba(80,80,80,0.1); height:40px; li
 #login_box .login_input ul li {background:#fff;}
 #login_box .login_input ul li + li {margin-top:7px;}
 #login_box .login_input ul li input {border:1px solid #d5d5d5; border-radius:50px; margin:0; font-size:14px; padding:0px 20px; width:100%; height:47px;}
-#login_box .login_btn {background:#00adb4; border:0; border-bottom:solid 3px #00959a; border-radius:50px; width:100%; height:52px; line-height:52px; font-size:16px; color:#fff; text-align:center; margin:20px 0 15px;}
+#login_box .login_btn {background:#3F375C; border:0; border-radius:50px; width:100%; height:52px; line-height:52px; font-size:16px; color:#fff; text-align:center; margin:20px 0 15px;}
 #login_box .login_input ul li input::-webkit-input-placeholder {color:#999; font-size:14px;}/* Webkit */
 #login_box .login_input ul li input:-moz-placeholder {color:#999; font-size:14px;}/* moz */
 #login_box .login_input ul li input:-ms-input-placeholder {color:#999; font-size:14px;}/* IE10+ */

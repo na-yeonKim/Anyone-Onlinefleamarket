@@ -25,11 +25,11 @@
                     <strong><i class="far fa-user-circle"></i> [[ ${session.loginMember.name} ]]</strong>님 반갑습니다.
                     <!-- 회원 상세 페이지 이동 버튼 -->
                     <form th:action="@{'/members/detail/' + ${session.loginMember.id}}" method="get" style="display:inline;">
-                        <button type="submit">내 정보</button>
+                        <button type="submit" class="btns btn_bdr6 btn_mid btnW70">내 정보</button>
                     </form>
                     <!-- 로그아웃 버튼 -->
                     <form action="/logout" method="post" style="display:inline;">
-                        <button type="submit">로그아웃</button>
+                        <button type="submit" class="btns btn_bdr6 btn_mid btnW70">로그아웃</button>
                     </form>
                 </div>
             </div>
