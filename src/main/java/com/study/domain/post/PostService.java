@@ -103,6 +103,14 @@ public class PostService {
         return new PagingResponse<>(list, pagination);
     }
 
+    /**
+     * 자동 가격 산정
+     * @param productName   상품명
+     * @param usagePeriod   사용 기간
+     * @param isOpened      개봉 여부
+     * @param condition     상품 상태
+     * @return 산정된 가격
+     */
     public int calculateAutoPrice(String productName, String usagePeriod, String isOpened, String condition) {
         int basePrice = priceScraper.getAveragePrice(productName);
 

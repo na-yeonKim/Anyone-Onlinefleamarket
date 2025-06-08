@@ -148,6 +148,7 @@ public class PostController {
         return "post/list";
     }
 
+    // 게시글 상세 페이지 열기
     @GetMapping("/post/view.do")
     public String openPostView(@RequestParam("id") Long id,
                                @RequestParam(required = false) Integer num,
@@ -163,7 +164,7 @@ public class PostController {
         return "post/view";
     }
 
-    // 사용자에게 메시지를 전달하고, 페이지를 리다이렉트 한다.
+    // 사용자에게 메시지를 전달하고 페이지 리다이렉트
     private String showMessageAndRedirect(final MessageDto params, Model model) {
         model.addAttribute("params", params);
         return "common/messageRedirect";

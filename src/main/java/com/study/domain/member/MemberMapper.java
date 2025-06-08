@@ -39,10 +39,23 @@ public interface MemberMapper {
      */
     int countByLoginId(String loginId);
 
+    /**
+     * 회원 신고 횟수 증가
+     * @param id - 회원 고유 번호 (PK)
+     */
     void updateReportCount(Long id);
 
+    /**
+     * 신고된 회원 목록 조회 (report_count > 0)
+     * @return 신고된 회원 목록
+     */
     List<MemberResponse> findReportedMembers();
 
+    /**
+     * 회원 고유 번호로 회원 상세 정보 조회
+     * @param id - 회원 고유 번호 (PK)
+     * @return 회원 상세 정보 DTO
+     */
     MemberResponse findById(Long id);
 
 }

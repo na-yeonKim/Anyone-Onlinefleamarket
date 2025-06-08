@@ -92,14 +92,27 @@ public class MemberService {
         return member;
     }
 
+    /**
+     * 회원 신고 처리 (신고 횟수 1 증가)
+     * @param id - 회원 ID (PK)
+     */
     public void reportMember(Long id) {
         memberMapper.updateReportCount(id);
     }
 
+    /**
+     * 신고된 회원 목록 조회 (report_count > 0)
+     * @return 신고된 회원 리스트
+     */
     public List<MemberResponse> getReportedMembers() {
         return memberMapper.findReportedMembers();
     }
 
+    /**
+     * 회원 ID로 회원 상세 정보 조회
+     * @param id - 회원 ID (PK)
+     * @return 회원 정보
+     */
     public MemberResponse findMemberById(Long id) {
         return memberMapper.findById(id);
     }

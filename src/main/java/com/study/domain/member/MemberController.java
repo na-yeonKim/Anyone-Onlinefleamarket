@@ -94,6 +94,7 @@ public class MemberController {
         return "redirect:/login.do";
     }
 
+    // 회원 신고 처리
     @PostMapping("/members/report/{loginId}")
     @ResponseBody
     public ResponseEntity<?> reportMember(@PathVariable String loginId) {
@@ -105,6 +106,7 @@ public class MemberController {
         return ResponseEntity.ok("신고가 완료되었습니다.");
     }
 
+    // 신고된 회원 목록 조회 (관리자 전용 페이지)
     @GetMapping("/admin/reported-members")
     public String reportedMembers(Model model, HttpSession session) {
         MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
@@ -117,6 +119,7 @@ public class MemberController {
         return "admin/reported-members";
     }
 
+    // 관리자에 의한 회원 강제 탈퇴 처리
     @PostMapping("/admin/members/{id}/delete")
     public String forceDeleteMember(@PathVariable Long id, HttpSession session) {
         MemberResponse loginMember = (MemberResponse) session.getAttribute("loginMember");
@@ -128,6 +131,7 @@ public class MemberController {
         return "redirect:/admin/reported-members";
     }
 
+    // 회원 상세 정보 조회 페이지 (회원 + 찜한 게시글 목록 포함)
     @GetMapping("/members/detail/{id}")
     public String memberDetail(@PathVariable Long id, Model model) {
         MemberResponse member = memberService.findMemberById(id);

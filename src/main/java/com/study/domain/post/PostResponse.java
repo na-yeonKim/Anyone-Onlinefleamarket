@@ -16,10 +16,10 @@ public class PostResponse {
     private LocalDateTime createdDate;     // 생성일시
     private LocalDateTime modifiedDate;    // 최종 수정일시
     private int price;                     // 가격
-    private Boolean isAutoPrice;
-    private String productName;
-    private String usagePeriod;
-    private Boolean isOpened;
-    private String condition;
+    private Boolean isAutoPrice;           // 자동 가격 산정 여부
+    private String productName;            // 상품명
+    private String usagePeriod;            // 사용 기간
+    private Boolean isOpened;              // 개봉 여부
+    private String condition;              // 상품 상태
 
 }
